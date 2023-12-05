@@ -1385,8 +1385,9 @@ word_pairs %>%
 
 
 # 연결중심그래프 다양한 색상
+set.seed(123)
 word_pairs %>%
-  slice_max(n, n = 200) %>%
+  slice_max(n, n = 300) %>%
   as_tbl_graph(directed = F) %>%
   activate(nodes) %>%
   mutate(centrality = centrality_degree()) %>%
@@ -1455,7 +1456,7 @@ tm_tb %>%
 
 # 하위단어 분석
 word_pairs %>%
-  filter(item1 == "마음")
+  filter(item1 == "나팔")
 
 word_pairs %>%
   filter(item1 == "영광")
@@ -1505,6 +1506,24 @@ word_pairs %>%
 
 word_pairs %>%
   filter(item1 %in% c("마음", "영혼")) %>%
+  group_by(item1) %>%
+  slice_max(n, n = 30) %>%
+  ungroup() %>%
+  mutate(item2 = reorder_within(item2, n, item1)) %>%
+  ggplot(aes(x = n,
+             y = item2,
+             fill = item1)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ item1,
+             ncol = 2,
+             scales = "free") +
+  scale_y_reordered() +
+  labs(x = "빈도",
+       y = "단어")+
+  theme(strip.text = element_text(face = "bold"))
+
+word_pairs %>%
+  filter(item1 %in% c("소리", "아멘")) %>%
   group_by(item1) %>%
   slice_max(n, n = 30) %>%
   ungroup() %>%
